@@ -1,0 +1,270 @@
+  <!DOCTYPE html>
+  <html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المنتج</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      .product-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 20px auto;
+        padding: 10px 0;
+        text-align: center;
+      }
+
+      .logo-link {
+        display: inline-block;
+        transition: transform 0.3s ease;
+      }
+
+      .logo-link:hover {
+        transform: scale(1.05);
+      }
+
+      .product-logo {
+        height: 90px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      .product-site-name {
+        font-size: 26px;
+        color: #e60073;
+        margin: 12px 0 5px;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px #ffd6e6aa;
+      }
+
+      .product-slogan {
+        font-size: 15px;
+        color: #555;
+        margin: 0;
+        font-style: italic;
+        opacity: 0.9;
+      }
+
+      .quantity-selector {
+        margin-top: 15px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .qty-controls input {
+        width: 50px;
+        text-align: center;
+        font-size: 18px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 6px;
+        background-color: #f9f9f9;
+      }
+
+      .qty-controls button {
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+        background-color: #ff5e63;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .qty-controls button:hover {
+        background-color: #e04d53;
+      }
+
+      .order-now-btn,
+      .go-to-cart-btn {
+        display: inline-block;
+        background-color: #ff5e63;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin-top: 20px;
+        margin-left: 10px;
+      }
+
+      .order-now-btn:hover,
+      .go-to-cart-btn:hover {
+        background-color: #e04d53;
+        transform: scale(1.03);
+      }
+    </style>
+  </head>
+  <body>
+  <div class="free-shipping-banner" id="freeShippingBanner">
+    🚚 شحن مجاني على الطلبات فوق <strong>1000 جنيه</strong>!
+    <span class="close-banner" onclick="document.getElementById('freeShippingBanner').style.display='none'">&times;</span>
+  </div>
+
+    <header class="product-header">
+      <a href="index.html" class="logo-link">
+        <img src="images/logo.png" alt="Nema Mama Logo" class="product-logo">
+      </a>
+      <h1 class="product-site-name">Nema Mama</h1>
+      <p class="product-slogan">كل ما يحتاجه لطفلك ♥</p>
+    </header>
+
+    <div class="product-page" id="product-details"></div>
+
+    <!-- Popup Image Viewer -->
+    <div class="popup" id="popup" onclick="closePopup()">
+      <span class="close">&times;</span>
+      <img id="popup-img" src="" alt="Product Preview">
+    </div>
+  <div class="product-sizes" id="sizeOptions"></div>
+
+    <!-- زر الرجوع لأعلى -->
+    <button id="backToTop" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
+
+    <script>
+    let selectedImage = null;
+    let product = null;
+    let selectedSize = null;
+
+    fetch('products.json')
+      .then(res => res.json())
+      .then(products => {
+        const container = document.getElementById("product-details");
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = parseInt(urlParams.get("id"));
+        product = products.find(p => p.id === id);
+
+        if (product) {
+          let thumbnails = `
+            <div class="thumbnail-slider">
+              <button class="thumb-arrow" onclick="scrollThumbnails(-1)">&#8249;</button>
+              <div class="thumbs-container" id="thumbs-container">
+                ${product.images.map(img => `<img src="${img}" onclick="selectImage('${img}')">`).join('')}
+              </div>
+              <button class="thumb-arrow" onclick="scrollThumbnails(1)">&#8250;</button>
+            </div>
+          `;
+
+          let colorFilters = product.colors.map(color => `<span class="color-filter">${color}</span>`).join('');
+          let discountPercent = '';
+          if (product.original_price && parseFloat(product.original_price) > parseFloat(product.price)) {
+            let discountValue = Math.round(
+              ((parseFloat(product.original_price) - parseFloat(product.price)) / parseFloat(product.original_price)) * 100
+            );
+            discountPercent = `خصم ${discountValue}%`;
+          }
+
+          let sizeOptions = product.sizes ? `
+            <div class="sizes">المقاسات المتاحة:
+              <div class="size-options">
+                ${product.sizes.map(size => `<button class="size-button" onclick="selectSize(this)">${size}</button>`).join('')}
+              </div>
+            </div>` : '';
+
+          let priceHTML = `
+            <div class="price-box">
+              ${product.original_price ? `<span class="original-price">${parseFloat(product.original_price).toFixed(2)} EGP</span>` : ''}
+              <span class="discounted-price">${parseFloat(product.price).toFixed(2)} EGP</span>
+              ${discountPercent ? `<div class="discount-badge">${discountPercent}</div>` : ''}
+            </div>
+          `;
+
+          container.innerHTML = `
+            <h2>${product.name}</h2>
+            <img id="main-img" src="${product.images[0]}" onclick="showPopup(this.src)">
+            ${thumbnails}
+            <p>${product.description}</p>
+            ${priceHTML}
+            <p class="shipping-note">📦 الشحن داخل القاهره 50 جنيه، وخارجها 60 جنيه.</p>
+            <div class="colors">ألوان متاحة: ${colorFilters}</div>
+            ${sizeOptions}
+            <div class="quantity-selector">
+              <label>الكمية:</label>
+              <div class="qty-controls">
+                <button onclick="changeQty(-1)">−</button>
+                <input type="number" id="quantity" value="1" min="1" readonly>
+                <button onclick="changeQty(1)">+</button>
+              </div>
+            </div>
+
+            <div class="cart-buttons">
+  <button class="order-now-btn" onclick="addToCart()">🛒 أضف إلى السلة</button>
+  <a href="order.html" class="go-to-cart-btn">عرض السلة</a>
+</div>`;
+        }
+      });
+
+    function selectSize(btn) {
+      document.querySelectorAll(".size-button").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedSize = btn.innerText;
+    }
+
+    function showPopup(src) {
+      document.getElementById("popup-img").src = src;
+      document.getElementById("popup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+    function selectImage(img) {
+  document.getElementById('main-img').src = img;
+  selectedImage = img;
+}
+
+
+    function scrollThumbnails(direction) {
+      const container = document.getElementById("thumbs-container");
+      const scrollAmount = 100;
+      container.scrollLeft += direction * scrollAmount;
+    }
+
+    function changeQty(amount) {
+      const qtyInput = document.getElementById("quantity");
+      let current = parseInt(qtyInput.value);
+      current += amount;
+      if (current < 1) current = 1;
+      qtyInput.value = current;
+    }
+
+    function addToCart() {
+      const quantity = parseInt(document.getElementById("quantity").value);
+
+      if (product.sizes && !selectedSize) {
+        alert("من فضلك اختر المقاس قبل الإضافة إلى السلة");
+        return;
+      }
+
+      const item = {
+        name: product.name,
+        price: product.price,
+        image: selectedImage || product.images[0],
+        qty: quantity,
+        size: selectedSize || null
+      };
+
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(item);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("تمت إضافة المنتج إلى السلة ✅");
+    }
+  </script>
+
+  </body>
+  </html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nema Mama</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js" defer></script>
+  
+
+</head>
+<body>
+  <div class="free-shipping-banner">
+  🚚 شحن مجاني على الطلبات فوق 1000 جنيه!
+</div>
+
+  <!-- Header -->
+  <header class="header">
+    <img src="/images/logo.png" alt="Nema Mama Logo" class="logo">
+    <h1 class="site-title" id="site-title"></h1>
+    <nav class="nav">
+      <ul>
+        <li><a href="#" onclick="filterProducts('مايوه')">مايوهات</a></li>
+        <li><a href="#" onclick="filterProducts('حديث')">حديث ولادة</a></li>
+        <li><a href="#" onclick="filterProducts('أطفال')">أطفال</a></li>
+        <li><a href="#" onclick="filterProducts('الكل')">عرض الكل</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- عروض خاصة -->
+  <section class="special-offer">
+    <h2>عروض خاصة 🔥</h2>
+    <p>خصومات لفترة محدودة على تشكيلات الصيف!</p>
+    <section class="special-offer">
+  <h2>إحصائيات المتجر</h2>
+  <div class="stats-slider-container">
+  <div class="stats-slider">
+    <div class="stat-box">
+      <span class="icon">👁️</span>
+      <p>الزائرين</p>
+      <h3 id="visits">0</h3>
+    </div>
+    <div class="stat-box">
+      <span class="icon">🛍️</span>
+      <p>عدد المنتجات</p>
+      <h3 id="products-count">0</h3>
+    </div>
+    <div class="stat-box">
+      <span class="icon">🎨</span>
+      <p>عدد القطع</p>
+      <h3 id="pieces-count">0</h3>
+    </div>
+    <div class="stat-box">
+      <span class="icon">📦</span>
+      <p>عدد الطلبات</p>
+      <h3 id="orders-count">0</h3>
+    </div>
+  </div>
+</section>
+
+  </section>
+  
+
+  <!-- المنتجات -->
+  <section class="product-section">
+    <div class="products" id="products"></div>
+  </section>
+  
+<button id="backToTop" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
+<section class="faq-section">
+  <h2>الأسئلة الشائعة</h2>
+
+  <div class="faq-item">
+    <button class="faq-question">ما هي خامة المنتجات؟</button>
+    <div class="faq-answer"> الخامات قطن 100%، مريحة وآمنة على الأطفال بخلاف منتجات المايوهات Water Proof</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">كيف يتم التوصيل؟</button>
+    <div class="faq-answer">يتم التوصيل من خلال مندوب خلال 2-5 أيام عمل.</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">ما مدة الشحن؟واسعار الشحن؟</button>
+    <div class="faq-answer">اسعار الشحن 
+الشحن داخل القاهرة (القاهرة ، الجيزة ، 6 أكتوبر ، حلوان) ب 50 جنية<br/>
+الشحن لمحافظه الاسكندرية ب 60 جنية<br/>
+الشحن إلى محافظات قريبة (الشرقية ، أسيوط ، البحيرة ، بني سويف ، الدقهلية ، دمياط ، الفيوم ، الغربية ، الإسماعيلية ، كفر الشيخ ، المنيا ، المنوفية ، بورسعيد ، القليوبية ، سوهاج ، السويس) ب 65 جنيه. <br/>
+الشحن للمحافظات الأخرى (أسوان ، الأقصر ، مطروح ، الوادي الجديد ، شمال سيناء ، قنا ، البحر الأحمر ، جنوب سيناء) ب 70 جنيهً.<br/>
+<strong>شحن مجاني للطلبات التي تزيد عن 1000 جنيه</strong></div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question">هل يمكن الاسترجاع؟</button>
+    <div class="faq-answer">نعم خلال4 أيام بشرط بقاء المنتج بحالته الأصلية دون استعمال.</div>
+  </div>
+</section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>تابعونا على</p>
+    <div class="social-links">
+      <a href="https://facebook.com" target="_blank">فيسبوك</a> |
+      <a href="https://www.instagram.com/nemamama4/" target="_blank">إنستجرام</a> |
+      <a href="https://wa.me/01093937124" target="_blank">واتساب</a>
+    </div>
+    <p>&copy; 2025 Nema Mama</p>
+  </footer>
+  
+  <script>
+    // عدد الزائرين (رقم عشوائي ثابت لكل تحميل)
+document.getElementById("visits").textContent = Math.floor(1500 + Math.random() * 1000);
+
+// تحميل عدد المنتجات من ملف JSON
+fetch("products.json")
+  .then(res => res.json())
+  .then(products => {
+    document.getElementById("products-count").textContent = products.length;
+  });
+
+// عداد طلبات يزيد كل 10 ساعات
+const baseOrders = 120;
+const startDate = new Date("2024-07-01T00:00:00");
+const now = new Date();
+const hoursPassed = Math.floor((now - startDate) / (1000 * 60 * 60));
+const fakeOrders = baseOrders + Math.floor(hoursPassed / 10);
+document.getElementById("orders-count").textContent = fakeOrders;
+
+  fetch('site.json')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("site-title").textContent = data.siteTitle;
+
+      // لو حابب تضيف شعار أو slogan
+      if (data.showSlogan && data.slogan) {
+        const slogan = document.createElement("p");
+        slogan.className = "site-slogan";
+        slogan.textContent = data.slogan;
+        document.getElementById("site-title").appendChild(slogan);
+      }fetch("products.json")
+  .then(res => res.json())
+  .then(products => {
+    // عدد المنتجات
+    document.getElementById("products-count").textContent = products.length;
+
+    // عدد القطع = مجموع الصور لكل منتج
+    let totalPieces = 0;
+    products.forEach(product => {
+      totalPieces += product.images.length;
+    });
+
+    document.getElementById("pieces-count").textContent = totalPieces;
+  });
+
+    }
+    );
+</script>
+
+</body>
+</html>

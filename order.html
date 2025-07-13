@@ -117,23 +117,17 @@
     <div id="discount-note" class="discount-note"></div>
 
     <form action="https://formsubmit.co/yhiamohammed65@gmail.com" method="POST">
-      <input type="hidden" name="_next" value="thanks.html" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="text" name="_honey" style="display:none" />
-      <!-- هنجمع تفاصيل الطلب في input hidden -->
-      <input type="hidden" id="hidden-products" name="تفاصيل الطلب" />
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_subject" value="طلب جديد من موقع Nema Mama">
+  <input type="hidden" name="_template" value="box">
+  <input type="hidden" name="تفاصيل_الطلب" id="hidden-products">
+  <!-- باقي الحقول هنا -->
+  <input type="text" name="الاسم" required>
+  <input type="tel" name="رقم الهاتف" required>
+  <textarea name="تفاصيل إضافية"></textarea>
+  <button type="submit">إرسال الطلب</button>
+</form>
 
-      <label for="name">اسمك الكامل</label>
-      <input type="text" id="name" name="الاسم" required />
-
-      <label for="phone">رقم الهاتف</label>
-      <input type="tel" id="phone" name="الهاتف" required />
-
-      <label for="address">العنوان</label>
-      <textarea id="address" name="العنوان" rows="3" required></textarea>
-
-      <button type="submit">إرسال الطلب</button>
-    </form>
     <button id="whatsapp-btn" type="button" style="margin-top: 15px; background:#25D366; color:#fff; border:none; border-radius:12px; padding:14px; width:100%; font-size:18px; cursor:pointer;">
   أرسل الطلب على واتساب
 </button>
